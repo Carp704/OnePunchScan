@@ -22,7 +22,7 @@ chmod +x OnePunchScan.sh
 ```
 ## Usage
 ```
-OnePunchScan.sh -t target [-p tcp/udp/all] [-i interface] [-o "NMAP options"] [-h]
+onepunchscan.sh -t target [-p tcp/udp/all] [-i interface] [-o "NMAP options"] [-h]
     -h: Help
     -i: Network interface (Defaults to tun0)
     -p: Protocol (Defaults to tcp)
@@ -32,7 +32,7 @@ OnePunchScan.sh -t target [-p tcp/udp/all] [-i interface] [-o "NMAP options"] [-
 
 **Example:**
 ```
-sudo OnePunchScan.sh -t 192.168.0.100 -p all -i eth0 -o "-sV -sC"
+sudo onepunchscan.sh -t 192.168.0.100 -p all -i eth0 -o "-sV -sC"
 ```
 ### Liability
 Carp_704 will not be liable for damages or losses arising from your use or inability to use the tool or otherwise arising under this agreement. 
