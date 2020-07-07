@@ -81,7 +81,7 @@ fi
 proto="tcp"
 iface="tun0"
 
-while getopts "p:i:t:o:h:" OPT; do
+while getopts "p:i:t:o:h" OPT; do
     case $OPT in
         p) proto=${OPTARG};;
         i) iface=${OPTARG};;
