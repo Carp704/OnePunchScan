@@ -20,7 +20,7 @@ The report template used in this script created by [@honze_net](https://twitter.
 cd /opt
 git clone https://github.com/Carp704/OnePunchScan.git
 cd OnePunchScan
-chmod +x OnePunchScan.sh
+chmod +x onepunchscan.sh
 ```
 ## Usage
 ```
