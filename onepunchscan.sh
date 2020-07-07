@@ -40,7 +40,7 @@ echo -e ' ----------------------------------------------------------------------
 }
 
 function usage {
-    echo "Usage: $0 -t target [-p tcp/udp/all] [-i interface] [-o "NMAP options"] [-h]"
+    echo "Usage: $0 -t target [-p tcp/udp/all] [-i interface] [-o \"NMAP options\"] [-h]"
     echo "       -h: Help"
     echo "       -i: Network interface (Defaults to tun0)"
     echo "       -p: Protocol (Defaults to tcp)"
