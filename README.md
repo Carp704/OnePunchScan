@@ -1,2 +1,2 @@
 # OnePunchScan
-![](https://ibb.co/VHzT81w)
+![](/one_punch_man_ok.jpg)
