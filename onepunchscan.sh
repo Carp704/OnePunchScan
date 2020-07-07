@@ -140,7 +140,7 @@ if [[ ! -z $(locate OnePunchScan) ]]; then
 	tooldir=$(locate OnePunchScan | head -n 1)
 else
 	echo -e "${YELLOW}[-]${DEFAULT}Could not locate OnePunchScan... updating search database"
-	updateb
+	updatedb
 	if [[ ! -z $(locate OnePunchScan) ]]; then
 	    tooldir=$(locate OnePunchScan | head -n 1)
         else
