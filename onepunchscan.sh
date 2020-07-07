@@ -150,7 +150,6 @@ fi
 
 # create target list
 target_list=${log_dir}/ndir/target_list
-cidr="/"
 if [[ ! $targets == *"/"* ]]; then 
     nmap -sL ${targets} | awk '/Nmap scan report/{print $NF}' | tr -d [\(,\)] > ${target_list}
 else 
