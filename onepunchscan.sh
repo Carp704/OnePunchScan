@@ -150,7 +150,12 @@ fi
 
 # create target list
 target_list=${log_dir}/ndir/target_list
-nmap -sL ${targets} | awk '/Nmap scan report/{print $NF}' | tr -d [\(,\)] > ${target_list}
+cidr="/"
+if [[ ! $targets == *"/"* ]]; then 
+    nmap -sL ${targets} | awk '/Nmap scan report/{print $NF}' | tr -d [\(,\)] > ${target_list}
+else 
+    nmap -sn ${targets} | awk '/Nmap scan report/{print $NF}' | tr -d [\(,\)] > ${target_list}
+fi
 
 while read ip; do
     log_ip=$(echo ${ip} | sed 's/\//-/g')
