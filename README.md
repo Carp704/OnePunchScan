@@ -8,6 +8,8 @@ This is a very simple to read bash script with **NO AUTOMATED EXPLOITATION!!!**
 ## Origin
 OnePunchScan was inspired by Superkojiman's [onetwopunch](https://github.com/superkojiman/onetwopunch). I wanted to create a simple script that could *quickly* run the standard enumeration I do for every machine and export it to a decent looking report. While avoiding network errors introduced by VPNs. If you are looking for something more complex I would recommend Tib3rius' [AutoRecon](https://github.com/Tib3rius/AutoRecon).
 
+The report template used in this script created by [@honze_net](https://twitter.com/honze_net) can be found [here](https://github.com/honze-net/nmap-bootstrap-xsl/).
+
 ## Requirements
 ```
  masscan 1.0.6+
