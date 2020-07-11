@@ -115,7 +115,7 @@ current=1.0.6
 if [[  $installed > $current || $installed = $current ]]; then
 	:
 else
-	echo -n "${RED}[!]${DEFAULT} Please update your masscan to version 1.0.6 or greater."
+	echo -e "${RED}[!]${DEFAULT} Please update your masscan to version 1.0.6 or greater."
 fi
 
 
