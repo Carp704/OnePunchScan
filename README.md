@@ -1,7 +1,7 @@
 # OnePunchScan
 ![](/one_punch_man_ok.jpg)
 
-**OnePunchScan** is a recon tool which automates basic service enumeration using nmap and masscan. It is intended as a time-saving tool for use in remote network environments like *HackTheBox* or *OSCP*.
+**OnePunchScan** is a recon tool which automates basic service enumeration using nmap and masscan. It is intended as a time-saving tool for use in remote network environments like *HackTheBox* or *PWK*.
 
 This is a very simple to read bash script with **NO AUTOMATED EXPLOITATION!!!**
 
