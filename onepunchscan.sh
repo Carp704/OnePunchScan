@@ -49,7 +49,7 @@ function usage {
 
 }
 
-banner
+# banner
 
 # validation
 
