@@ -14,6 +14,7 @@ The report template used in this script created by [@honze_net](https://twitter.
 ```
  masscan 1.0.6+
  nmap
+ python3 
 ```
 ## Installation
 ```
