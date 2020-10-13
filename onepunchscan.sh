@@ -1,7 +1,7 @@
 #!/bin/bash 
 
 # About: Automate your initial (OSCP/HTB/etc.) scanning with nmap and masscan. 
-# Inspired by: https://github.com/superkojiman/onetwopunch by superkojiman. 
+# Inspired by: https://github.com/superkojiman/onetwopunch 
 # @carp_704
 
 ESC="\e["
@@ -46,7 +46,9 @@ function usage {
     echo "       -i: Network interface (Defaults to tun0)"
     echo "       -p: Protocol (Defaults to tcp)"
     echo "       -t: Target IP or Range"
-    echo "       -o: Specify NMAP options (-Pn, -sV, --script safe, etc.)"
+    echo "       -o: Specify NMAP options (-Pn, -sV, --script safe, etc.) !!!NO OUTPUT OPTIONS!!!"
+    echo ""
+    echo "       Example: $0 -t 10.10.10.1,3,7,8 -p all -i tun0 -o \"-Pn -sV -sC\""
     echo ""
 }
 
@@ -121,6 +123,7 @@ fi
 
 
 # backup old scans
+start_dir="$(pwd)"
 log_dir="$(pwd)/onepunchscan"
 mkdir -p "${log_dir}/backup/"
 if [[ -d "${log_dir}/ndir/" ]]; then 
@@ -128,12 +131,17 @@ if [[ -d "${log_dir}/ndir/" ]]; then
 fi
 if [[ -d "${log_dir}/mdir/" ]]; then 
     mv "${log_dir}/mdir/" "${log_dir}/backup/mdir-$(date "+%Y%m%d-%H%M%S")/"
-fi 
+fi
+if [[ -d "${log_dir}/report/" ]]; then 
+    mv "${log_dir}/report/" "${log_dir}/backup/report-$(date "+%Y%m%d-%H%M%S")/"
+fi
 
 rm -rf "${log_dir}/ndir/"
 mkdir -p "${log_dir}/ndir/"
 rm -rf "${log_dir}/mdir/"
 mkdir -p "${log_dir}/mdir/"
+rm -rf "${log_dir}/report/"
+mkdir -p "${log_dir}/report/"
 
 # locate install directory
 
@@ -159,62 +167,76 @@ fi
 
 while read ip; do
     log_ip=$(echo ${ip} | sed 's/\//-/g')
+    echo -e ""
     echo -e "${BLUE}[+]${DEFAULT} Scanning $ip for $proto ports..."
+    echo -e ""
 
     # masscan identifies all open TCP ports
-    if [[ $proto == "tcp" || $proto == "all" ]]; then 
+    if [[ $proto == "tcp" || $proto == "all" ]]; then
         echo -e "${BLUE}[+]${DEFAULT} Obtaining all open TCP ports..."
-        echo -e "${BLUE}[+]${DEFAULT} masscan -p0-65535 --rate=1000 --wait 5 -e tun0 -oG ${log_dir}/mdir/${log_ip}-tcp.txt ${ip}"
-        masscan -p0-65535 --rate=2000 --wait 5 -e tun0 -oG ${log_dir}/mdir/${log_ip}-tcp.txt ${ip}
+        echo -e "${BLUE}[+]${DEFAULT} masscan -p0-65535 --rate=2000 --wait 5 -e tun0 -oG ${log_dir}/mdir/${log_ip}-tcp.txt ${ip}"
+	masscan -p0-65535 --rate=2000 --wait 5 -e tun0 -oG ${log_dir}/mdir/${log_ip}-tcp.txt ${ip}
         ports=$(cat "${log_dir}/mdir/${log_ip}-tcp.txt" | grep open | cut -d" " -f5 | cut -d"/" -f 1 | tr '\n' ',')
         if [[ ! -z $ports ]]; then
 	    if [[ -z $options ]]; then 
                 # nmap scans and creates a report
                 echo -e "${GREEN}[*]${DEFAULT} TCP ports for nmap to scan: $ports"
-	        echo -e "${BLUE}[+]${DEFAULT} nmap -Pn -sV -sC --min-rate 5000 -p${ports} -n -e ${iface} --stylesheet ${tooldir}/nmap-bootstrap.xsl -T4 -oX ${log_dir}/ndir/${log_ip}/tcp.xml ${ip}"
-                mkdir -p ${log_dir}/ndir/${log_ip} 2>/dev/null
-                nmap -Pn -sV -sC --min-rate 5000 -p${ports} -n -e ${iface} --stylesheet ${tooldir}/nmap-bootstrap.xsl -T4 -oX ${log_dir}/ndir/${log_ip}/tcp.xml ${ip}
-                xsltproc -o ${log_dir}/ndir/${log_ip}/tcp.html ${tooldir}/nmap-bootstrap.xsl ${log_dir}/ndir/${log_ip}/tcp.xml
+	        echo -e "${BLUE}[+]${DEFAULT} nmap -Pn -sV -sC --min-rate 5000 -p${ports} -n -e ${iface} --stylesheet ${tooldir}/nmap-bootstrap.xsl -T4 -oX ${log_dir}/ndir/${log_ip}/${ip}_tcp.xml ${ip}"
+		mkdir -p ${log_dir}/ndir/${log_ip} 2>/dev/null
+                nmap -Pn -sV -sC --min-rate 5000 -p${ports} -n -e ${iface} -v0 --stylesheet ${tooldir}/nmap-bootstrap.xsl -T4 -oX ${log_dir}/ndir/${log_ip}/${ip}_tcp.xml ${ip}
+                xsltproc -o ${log_dir}/ndir/${log_ip}/${ip}_tcp.html ${tooldir}/nmap-bootstrap.xsl ${log_dir}/ndir/${log_ip}/${ip}_tcp.xml
             else
 		echo -e "${GREEN}[*]${DEFAULT} TCP ports for nmap to scan: $ports"
-                echo -e "${BLUE}[+]${DEFAULT} nmap -Pn --min-rate 5000 -p${ports} -n -e ${iface} --stylesheet ${tooldir}/nmap-bootstrap.xsl -T4 -oX ${log_dir}/ndir/${log_ip}/tcp.xml ${options} ${ip}"
-                mkdir -p ${log_dir}/ndir/${log_ip} 2>/dev/null
-                nmap -Pn --min-rate 5000 -p${ports} -n -e ${iface} --stylesheet ${tooldir}/nmap-bootstrap.xsl -T4 -oX ${log_dir}/ndir/${log_ip}/tcp.xml ${options} ${ip}
-                xsltproc -o ${log_dir}/ndir/${log_ip}/tcp.html ${tooldir}/nmap-bootstrap.xsl ${log_dir}/ndir/${log_ip}/tcp.xml
+                echo -e "${BLUE}[+]${DEFAULT} nmap -Pn --min-rate 5000 -p${ports} -n -e ${iface} --stylesheet ${tooldir}/nmap-bootstrap.xsl -T4 -oX ${log_dir}/ndir/${log_ip}/${ip}_tcp.xml ${options} ${ip}"
+		mkdir -p ${log_dir}/ndir/${log_ip} 2>/dev/null
+                nmap -Pn --min-rate 5000 -p${ports} -n -e ${iface} -v0 --stylesheet ${tooldir}/nmap-bootstrap.xsl -T4 -oX ${log_dir}/ndir/${log_ip}/${ip}_tcp.xml ${options} ${ip}
+                xsltproc -o ${log_dir}/ndir/${log_ip}/${ip}_tcp.html ${tooldir}/nmap-bootstrap.xsl ${log_dir}/ndir/${log_ip}/${ip}_tcp.xml
             fi		
         else
+	    echo -e ""
             echo -e "${RED}[!]${DEFAULT} No TCP ports found"
+	    echo -e ""
         fi
     fi
 
     # Due to UDP errors on masscan nmap identifies all open UDP ports
-    if [[ $proto == "udp" || $proto == "all" ]]; then  
+    if [[ $proto == "udp" || $proto == "all" ]]; then
         echo -e "${BLUE}[+]${DEFAULT} Obtaining all open UDP ports..."
-        echo -e "${BLUE}[+]${DEFAULT} nmap -n -Pn -sU -p- -e ${iface} -oX "${log_dir}/mdir/${log_ip}-udp.txt" ${ip}"
-        nmap -n -Pn --min-rate 10000 -sU -T5 -p- -e ${iface} -oX "${log_dir}/mdir/${log_ip}-udp.txt" ${ip}
+        echo -e "${BLUE}[+]${DEFAULT}  nmap -n -Pn --min-rate 5000 -sU -T5 -p- -e ${iface} -oX "${log_dir}/mdir/${log_ip}-udp.txt" ${ip}"
+	nmap -n -Pn --min-rate 5000 -sU -T5 -p- -e ${iface} -v0 -oX "${log_dir}/mdir/${log_ip}-udp.txt" ${ip}
         ports=$(cat ${log_dir}/mdir/${log_ip}-udp.txt | grep open | grep -v count | cut -d'"' -f4)
         if [[ ! -z $ports ]]; then
             if [[ -z $options ]]; then
                 # nmap scans and creates a report
                 echo -e "${GREEN}[*]${DEFAULT} UDP ports for nmap to scan: $ports"
-                echo -e "${BLUE}[+]${DEFAULT} nmap -Pn -sV -sU -sC -p${ports} -n -e ${iface} --stylesheet ${tooldir}/nmap-bootstrap.xsl -T4 -oX ${log_dir}/ndir/${log_ip}/udp.xml ${ip}"
-	        mkdir -p ${log_dir}/ndir/${log_ip} 2>/dev/null
-                nmap -Pn -sV -sU -sC -p${ports} -n -e ${iface} --stylesheet ${tooldir}/nmap-bootstrap.xsl -T4 -oX ${log_dir}/ndir/${log_ip}/udp.xml ${ip}
-                xsltproc -o ${log_dir}/ndir/${log_ip}/udp.html ${tooldir}/nmap-bootstrap.xsl ${log_dir}/ndir/${log_ip}/udp.xml
-            else 
+                echo -e "${BLUE}[+]${DEFAULT} nmap -Pn -sV -sU -sC -p${ports} -n -e ${iface} --stylesheet ${tooldir}/nmap-bootstrap.xsl -T4 -oX ${log_dir}/ndir/${log_ip}/${log_ip}_udp.xml ${ip}"
+		mkdir -p ${log_dir}/ndir/${log_ip} 2>/dev/null
+                nmap -Pn -sV -sU -sC -p${ports} -n -e ${iface} -v0 --stylesheet ${tooldir}/nmap-bootstrap.xsl -T4 -oX ${log_dir}/ndir/${log_ip}/${log_ip}_udp.xml ${ip}
+                xsltproc -o ${log_dir}/ndir/${log_ip}/${log_ip}_udp.html ${tooldir}/nmap-bootstrap.xsl ${log_dir}/ndir/${log_ip}/${log_ip}_udp.xml
+            else
                 echo -e "${GREEN}[*]${DEFAULT} UDP ports for nmap to scan: $ports"
-                echo -e "${BLUE}[+]${DEFAULT} nmap -Pn -sU --min-rate 5000 -p${ports} -n -e ${iface} --stylesheet $(pwd)/nmap-bootstrap.xsl -T4 -oX ${log_dir}/ndir/${log_ip}/udp.xml ${options} ${ip}"
-	        mkdir -p ${log_dir}/ndir/${log_ip} 2>/dev/null
-                nmap -Pn -sU --min-rate 5000 -p${ports} -n -e ${iface} --stylesheet ${tooldir}/nmap-bootstrap.xsl -T4 -oX ${log_dir}/ndir/${log_ip}/udp.xml ${options} ${ip}
-                xsltproc -o ${log_dir}/ndir/${log_ip}/udp.html ${tooldir}/nmap-bootstrap.xsl ${log_dir}/ndir/${log_ip}/udp.xml
+                echo -e "${BLUE}[+]${DEFAULT} nmap -Pn -sU --min-rate 5000 -p${ports} -n -e ${iface} --stylesheet $(pwd)/nmap-bootstrap.xsl -T4 -oX ${log_dir}/ndir/${log_ip}/${log_ip}_udp.xml ${options} ${ip}"
+		mkdir -p ${log_dir}/ndir/${log_ip} 2>/dev/null
+                nmap -Pn -sU --min-rate 5000 -p${ports} -n -e ${iface} -v0 --stylesheet ${tooldir}/nmap-bootstrap.xsl -T4 -oX ${log_dir}/ndir/${log_ip}/${log_ip}_udp.xml ${options} ${ip}
+                xsltproc -o ${log_dir}/ndir/${log_ip}/${log_ip}_udp.html ${tooldir}/nmap-bootstrap.xsl ${log_dir}/ndir/${log_ip}/${log_ip}_udp.xml
             fi
         else
+	    echo -e ""
             echo -e "${RED}[!]${DEFAULT} No UDP ports found"
+	    echo -e ""
         fi
     fi
     
 done < ${target_list}
 
+# Create a combined report file in the main scan directory. 
 
+mkdir -p "${log_dir}/report/"
+cp ${log_dir}/ndir/*/*.xml ${log_dir}/report/
+python3 ${tooldir}/merge.py -d ${log_dir}/report/ -q
+mv ${start_dir}/results_* ${log_dir}/report/
+rm -rf ${log_dir}/report/[0-9]*
+
+echo -e ""
 echo -e "${BLUE}[+]${DEFAULT} Scans completed"
 echo -e "${BLUE}[+]${DEFAULT} Results saved to ${log_dir}"
