@@ -48,7 +48,7 @@ Andreas Hontzia (@honze_net)
             content: "\e080"; /* glyphicon-chevron-right */
           }
         </style>
-        <title>Scan Report Nmap <xsl:value-of select="/nmaprun/@version"/></title>
+        <title>Scan Report</title>
       </head>
       <body>
         <nav class="navbar navbar-default navbar-fixed-top">
@@ -73,13 +73,9 @@ Andreas Hontzia (@honze_net)
         </nav>
         <div class="container">
           <div class="jumbotron">
-            <h1>Scan Report<br/><small>Nmap <xsl:value-of select="/nmaprun/@version"/></small></h1>
+            <h1>Scan Report<br/></h1>
             <pre style="white-space:pre-wrap; word-wrap:break-word;"><xsl:value-of select="/nmaprun/@args"/></pre>
             <p class="lead">
-              <xsl:value-of select="/nmaprun/@startstr"/> – <xsl:value-of select="/nmaprun/runstats/finished/@timestr"/><br/>
-              <xsl:value-of select="/nmaprun/runstats/hosts/@total"/> hosts scanned.
-              <xsl:value-of select="/nmaprun/runstats/hosts/@up"/> hosts up.
-              <xsl:value-of select="/nmaprun/runstats/hosts/@down"/> hosts down.
             </p>
             <div class="progress">
               <div class="progress-bar progress-bar-success" style="width: 0%">
@@ -296,9 +292,6 @@ Andreas Hontzia (@honze_net)
         <footer class="footer">
           <div class="container">
             <p class="text-muted">
-              This report was generated with <a href="https://github.com/honze-net/nmap-bootstrap-xsl">Nmap Bootstrap XSL</a>.<br/>
-              Licensed under <a href="https://creativecommons.org/licenses/by-sa/4.0/">Creative Commons BY-SA</a>.<br/>
-              Designed and built by Andreas Hontzia (<a href="https://www.twitter.com/honze_net">@honze_net</a>).<br/>
             </p>
           </div>
         </footer>
